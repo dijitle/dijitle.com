@@ -49,10 +49,10 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 
 ### Install ArgoCD
 
-````bash
+```bash
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-``
+```
 
 ### Deploy Applications
 
@@ -61,7 +61,7 @@ Apply the AppProject and root application:
 ```bash
 kubectl apply -f argocd/appproject.yaml
 kubectl apply -f argocd/root-application.yaml
-``
+```
 
 This will automatically sync and deploy all applications defined in argocd/applications/.
 
@@ -72,11 +72,12 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Open https://localhost:8080
 # Default username: admin
 # Get initial password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-``
+```
 
 ## 📦 Applications
 
 ### Website
+
 - **Path**: apps/website/
 - **Namespace**: website
 - **Image**: nginx
@@ -84,6 +85,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 - **Exposed**: via Ingress (example.com)
 
 ### API
+
 - **Path**: apps/api/
 - **Namespace**: api
 - **Image**: python:3.11-slim
@@ -94,7 +96,8 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 ### Update Application Source
 
-Edit argocd/applications/*.yaml and argocd/appproject.yaml to update:
+Edit argocd/applications/\*.yaml and argocd/appproject.yaml to update:
+
 - GitHub repository URL (replace yourusername)
 - Target branch/revision
 - Namespaces
@@ -103,6 +106,7 @@ Edit argocd/applications/*.yaml and argocd/appproject.yaml to update:
 ### Customize Helm Values
 
 Update apps/<app-name>/values.yaml to customize:
+
 - Image versions
 - Resource limits
 - Replica counts
@@ -150,6 +154,7 @@ Changes in this repository automatically propagate to your k3s cluster via ArgoC
 ### Rollback to Previous Version
 
 In ArgoCD UI:
+
 1. Go to application
 2. Click "History"
 3. Select previous revision and click "Rollback"
@@ -186,4 +191,4 @@ kubectl get application website -n argocd -o jsonpath='{.status.operationState}'
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-````
+```
