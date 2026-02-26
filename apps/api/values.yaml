@@ -16,18 +16,13 @@ service:
 
 ingress:
   enabled: true
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  className: "traefik"
+  annotations: {}
   hosts:
-    - host: "api.example.com"
+    - host: "api.dijitle.com"
       paths:
         - path: /
           pathType: Prefix
-  tls:
-    - secretName: api-tls
-      hosts:
-        - api.example.com
 
 env:
   - name: LOG_LEVEL

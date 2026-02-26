@@ -11,7 +11,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/yourusername/dijitle.com
+    repoURL: https://github.com/dijitle/dijitle.com
     targetRevision: HEAD
     path: argocd/applications
   destination:

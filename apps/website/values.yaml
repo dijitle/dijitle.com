@@ -16,18 +16,13 @@ service:
 
 ingress:
   enabled: true
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  className: "traefik"
+  annotations: {}
   hosts:
-    - host: "example.com"
+    - host: "www.dijitle.com"
       paths:
         - path: /
           pathType: Prefix
-  tls:
-    - secretName: website-tls
-      hosts:
-        - example.com
 
 resources:
   limits:
