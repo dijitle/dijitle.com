@@ -169,5 +169,5 @@ kubectl get application website -n argocd -o jsonpath='{.status.operationState}'
 
 ## 📄 License
 
-Your License Here
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ````
