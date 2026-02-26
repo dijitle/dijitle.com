@@ -7,6 +7,7 @@ This repository uses multi-stage Docker builds to create optimized container ima
 ## Docker Images
 
 ### Website Image
+
 - **Dockerfile**: `apps/website/Dockerfile`
 - **Base Images**:
   - Builder: `node:18-alpine` (for build step)
@@ -15,6 +16,7 @@ This repository uses multi-stage Docker builds to create optimized container ima
 - **Exposed Port**: 80
 
 ### API Image
+
 - **Dockerfile**: `apps/api/Dockerfile`
 - **Base Images**:
   - Builder: `python:3.11-slim` (for build step)
@@ -56,6 +58,7 @@ This repository uses multi-stage Docker builds to create optimized container ima
 ## GitHub Actions Workflow
 
 ### Workflow File
+
 - **Location**: `.github/workflows/docker-build.yml`
 - **Triggers**:
   - `push` to main/develop branches (when `apps/` changes)
@@ -65,6 +68,7 @@ This repository uses multi-stage Docker builds to create optimized container ima
 ### Build Jobs
 
 #### 1. build-website
+
 - Checks out code
 - Sets up Docker Buildx for advanced features
 - Authenticates with GitHub Container Registry
@@ -73,10 +77,12 @@ This repository uses multi-stage Docker builds to create optimized container ima
 - Pushes to registry on merge
 
 #### 2. build-api
+
 - Same process as website build
 - Separate job for parallelization
 
 #### 3. security-scan
+
 - Runs Trivy vulnerability scanner on images
 - Uploads results to GitHub Security tab
 - Only runs on main branch
@@ -84,6 +90,7 @@ This repository uses multi-stage Docker builds to create optimized container ima
 ### Image Tags
 
 Images are tagged with:
+
 - `latest` - Latest on main branch
 - Branch name (e.g., `develop`, `main`)
 - Git SHA (e.g., `main-abc123def`)
@@ -94,24 +101,28 @@ Example: `ghcr.io/yourusername/dijitle.com/website:latest`
 ## Building Locally
 
 ### Build Website Image
+
 ```bash
 cd apps/website
 docker build -t dijitle-website:latest .
 ```
 
 ### Build API Image
+
 ```bash
 cd apps/api
 docker build -t dijitle-api:latest .
 ```
 
 ### Run Website
+
 ```bash
 docker run -p 8080:80 dijitle-website:latest
 # Access at http://localhost:8080
 ```
 
 ### Run API
+
 ```bash
 docker run -p 8000:8000 dijitle-api:latest
 # Access at http://localhost:8000
@@ -120,18 +131,21 @@ docker run -p 8000:8000 dijitle-api:latest
 ## Image Inspection
 
 ### View image layers
+
 ```bash
 docker inspect dijitle-website:latest
 docker image history dijitle-website:latest
 ```
 
 ### Check size reduction
+
 ```bash
 # Multi-stage build reduces final image size significantly
 docker images | grep dijitle
 ```
 
 ### Run with environment variables
+
 ```bash
 docker run -e LOG_LEVEL=DEBUG -p 8000:8000 dijitle-api:latest
 ```
@@ -161,6 +175,7 @@ Automatic authentication via `${{ secrets.GITHUB_TOKEN }}` in workflows.
 ### Pushing to Other Registries
 
 To push to Docker Hub or other registries, add credentials in repository secrets:
+
 - `DOCKER_USERNAME`
 - `DOCKER_PASSWORD`
 
@@ -183,21 +198,24 @@ Update `.github/workflows/docker-build.yml` to login to additional registries:
 ✅ **.dockerignore** - Excludes unnecessary files  
 ✅ **Cache layers** - Uses GitHub Actions cache for faster builds  
 ✅ **Security scanning** - Trivy scans for vulnerabilities  
-✅ **Metadata tags** - Semantic versioning and git SHA tracking  
+✅ **Metadata tags** - Semantic versioning and git SHA tracking
 
 ## Troubleshooting
 
 ### Build fails in GitHub Actions
+
 1. Check workflow logs in Actions tab
 2. Verify repository has write access to packages
 3. Check for Docker syntax errors locally first
 
 ### Images not pushing to registry
+
 1. Confirm GITHUB_TOKEN has `packages:write` permission
 2. Check repository Settings > Actions > General > Workflow permissions
 3. Verify branch protection rules allow Actions
 
 ### Image too large
+
 1. Review Dockerfile for unnecessary dependencies
 2. Use `.dockerignore` to exclude files
 3. Consider removing debug tools in runtime stage

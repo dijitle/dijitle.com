@@ -8,12 +8,12 @@ metadata:
 spec:
   project: k3s-apps
   source:
-    repoURL: https://github.com/yourusername/dijitle.com
+    repoURL: https://github.com/dijitle/dijitle.com
     targetRevision: HEAD
     path: apps/api
   destination:
     server: https://kubernetes.default.svc
-    namespace: api
+    namespace: default
   syncPolicy:
     automated:
       prune: true
