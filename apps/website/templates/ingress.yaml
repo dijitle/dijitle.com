@@ -2,10 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "website._helpers" . }}-ingress
+  name: {{ include "website.fullname" . }}-ingress
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "website._helpers" . | nindent 4 }}
+    {{- include "website.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -24,7 +24,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "website._helpers" . }}
+                name: {{ include "website.fullname" . }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
