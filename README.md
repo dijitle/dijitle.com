@@ -4,7 +4,8 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 
 ## 📁 Repository Structure
 
-`├── .github/
+```
+├── .github/
 │   └── workflows/
 │       └── docker-build.yml       # GitHub Actions for Docker builds
 ├── apps/                          # Helm charts and Dockerfiles
@@ -35,7 +36,8 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 │   ├── ARCHITECTURE.md
 │   ├── DEVELOPMENT.md
 │   └── DOCKER.md
-└── LICENSE`
+└── LICENSE
+```
 
 ## 🚀 Quick Start
 
@@ -61,7 +63,7 @@ kubectl apply -f argocd/appproject.yaml
 kubectl apply -f argocd/root-application.yaml
 ``
 
-This will automatically sync and deploy all applications defined in rgocd/applications/.
+This will automatically sync and deploy all applications defined in argocd/applications/.
 
 ### Access ArgoCD UI
 
