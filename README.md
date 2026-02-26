@@ -4,8 +4,7 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 
 ## 📁 Repository Structure
 
-``
-├── apps/                          # Helm charts for applications
+`├── apps/                          # Helm charts for applications
 │   ├── website/                   # Website application
 │   │   ├── Chart.yaml
 │   │   ├── values.yaml
@@ -23,8 +22,7 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 └── docs/                          # Documentation
     ├── SETUP.md
     ├── ARCHITECTURE.md
-    └── DEVELOPMENT.md
-``
+    └── DEVELOPMENT.md`
 
 ## 🚀 Quick Start
 
@@ -36,7 +34,7 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 
 ### Install ArgoCD
 
-``ash
+````bash
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ``
@@ -45,7 +43,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 Apply the AppProject and root application:
 
-``ash
+```bash
 kubectl apply -f argocd/appproject.yaml
 kubectl apply -f argocd/root-application.yaml
 ``
@@ -54,7 +52,7 @@ This will automatically sync and deploy all applications defined in rgocd/appli
 
 ### Access ArgoCD UI
 
-``ash
+```bash
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Open https://localhost:8080
 # Default username: admin
@@ -64,15 +62,15 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 ## 📦 Applications
 
 ### Website
-- **Path**: pps/website/
+- **Path**: apps/website/
 - **Namespace**: website
 - **Image**: nginx
 - **Replicas**: 2
 - **Exposed**: via Ingress (example.com)
 
 ### API
-- **Path**: pps/api/
-- **Namespace**: pi
+- **Path**: apps/api/
+- **Namespace**: api
 - **Image**: python:3.11-slim
 - **Replicas**: 2 (with autoscaling up to 10)
 - **Exposed**: via Ingress (api.example.com)
@@ -81,7 +79,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 ### Update Application Source
 
-Edit rgocd/applications/*.yaml and rgocd/appproject.yaml to update:
+Edit argocd/applications/*.yaml and argocd/appproject.yaml to update:
 - GitHub repository URL (replace yourusername)
 - Target branch/revision
 - Namespaces
@@ -89,7 +87,7 @@ Edit rgocd/applications/*.yaml and rgocd/appproject.yaml to update:
 
 ### Customize Helm Values
 
-Update pps/<app-name>/values.yaml to customize:
+Update apps/<app-name>/values.yaml to customize:
 - Image versions
 - Resource limits
 - Replica counts
@@ -121,15 +119,15 @@ Changes in this repository automatically propagate to your k3s cluster via ArgoC
 
 ### Add a New Application
 
-1. Create a new directory under pps/: mkdir -p apps/myapp/templates
-2. Create Chart.yaml and alues.yaml
-3. Create Helm templates in 	emplates/
-4. Create ArgoCD Application: rgocd/applications/myapp.yaml
+1. Create a new directory under apps/: mkdir -p apps/myapp/templates
+2. Create Chart.yaml and values.yaml
+3. Create Helm templates in templates/
+4. Create ArgoCD Application: argocd/applications/myapp.yaml
 5. Push to repository - ArgoCD will automatically deploy
 
 ### Update Application Version
 
-1. Edit the image tag in pps/<app-name>/values.yaml
+1. Edit the image tag in apps/<app-name>/values.yaml
 2. Commit and push
 3. ArgoCD syncs automatically (or trigger manual sync)
 
@@ -151,7 +149,7 @@ In ArgoCD UI:
 
 ### Check Application Status
 
-``ash
+```bash
 # List all applications
 kubectl get application -n argocd
 
@@ -172,3 +170,4 @@ kubectl get application website -n argocd -o jsonpath='{.status.operationState}'
 ## 📄 License
 
 Your License Here
+````
