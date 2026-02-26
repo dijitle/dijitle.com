@@ -1,6 +1,6 @@
 # Multi-stage build for website
 # Stage 1: Builder
-FROM node:18-alpine AS builder
+FROM node:alpine AS builder
 
 WORKDIR /build
 
