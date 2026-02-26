@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: k3s-apps
+  namespace: argocd
+spec:
+  description: Project for k3s cluster applications
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: https://kubernetes.default.svc
+  clusterResourceBlacklist:
+    - group: ""
+      kind: Namespace
+    - group: ""
+      kind: ResourceQuota
+    - group: ""
+      kind: NetworkPolicy
+    - group: ""
+      kind: LimitRange
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+    - group: ""
+      kind: LimitRange

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: api
+description: A Helm chart for API deployment
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - api
+  - backend
+maintainers:
+  - name: Your Name
+    email: you@example.com

@@ -1,70 +1,174 @@
-# Getting Started with Create React App
+﻿# Dijitle.com - ArgoCD GitOps Repository
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Multi-application Kubernetes deployment repository using ArgoCD and Helm charts for k3s cluster.
 
-## Available Scripts
+## 📁 Repository Structure
 
-In the project directory, you can run:
+``
+├── apps/                          # Helm charts for applications
+│   ├── website/                   # Website application
+│   │   ├── Chart.yaml
+│   │   ├── values.yaml
+│   │   └── templates/
+│   └── api/                       # API application
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       └── templates/
+├── argocd/                        # ArgoCD configuration
+│   ├── appproject.yaml            # AppProject definition
+│   ├── root-application.yaml      # Root app that manages other apps
+│   └── applications/              # Individual app definitions
+│       ├── website.yaml
+│       └── api.yaml
+└── docs/                          # Documentation
+    ├── SETUP.md
+    ├── ARCHITECTURE.md
+    └── DEVELOPMENT.md
+``
 
-### `npm start`
+## 🚀 Quick Start
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- k3s cluster running
+- kubectl configured to access your cluster
+- ArgoCD installed in your cluster
 
-### `npm test`
+### Install ArgoCD
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+``ash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+``
 
-### `npm run build`
+### Deploy Applications
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Apply the AppProject and root application:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+``ash
+kubectl apply -f argocd/appproject.yaml
+kubectl apply -f argocd/root-application.yaml
+``
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This will automatically sync and deploy all applications defined in rgocd/applications/.
 
-### `npm run eject`
+### Access ArgoCD UI
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+``ash
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+# Open https://localhost:8080
+# Default username: admin
+# Get initial password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+``
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📦 Applications
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Website
+- **Path**: pps/website/
+- **Namespace**: website
+- **Image**: nginx
+- **Replicas**: 2
+- **Exposed**: via Ingress (example.com)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### API
+- **Path**: pps/api/
+- **Namespace**: pi
+- **Image**: python:3.11-slim
+- **Replicas**: 2 (with autoscaling up to 10)
+- **Exposed**: via Ingress (api.example.com)
 
-## Learn More
+## 🔧 Configuration
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Update Application Source
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Edit rgocd/applications/*.yaml and rgocd/appproject.yaml to update:
+- GitHub repository URL (replace yourusername)
+- Target branch/revision
+- Namespaces
+- Resource policies
 
-### Code Splitting
+### Customize Helm Values
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Update pps/<app-name>/values.yaml to customize:
+- Image versions
+- Resource limits
+- Replica counts
+- Ingress configuration
+- Environment variables
 
-### Analyzing the Bundle Size
+## 📝 GitOps Workflow
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. **Make changes** to Helm values or application manifests locally
+2. **Commit and push** to your repository
+3. **ArgoCD detects** the changes (automatically or on sync)
+4. **Applications sync** to the cluster
 
-### Making a Progressive Web App
+Changes in this repository automatically propagate to your k3s cluster via ArgoCD's continuous synchronization.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🔐 ArgoCD Configuration
 
-### Advanced Configuration
+- **Auto-sync**: Enabled (automatic deployment on repo changes)
+- **Prune**: Enabled (removes resources deleted from repo)
+- **Self-heal**: Enabled (fixes manual cluster changes)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📚 Additional Documentation
 
-### Deployment
+- [Setup Guide](docs/SETUP.md) - Detailed installation instructions
+- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
+- [Development](docs/DEVELOPMENT.md) - Development workflow
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🛠️ Common Tasks
 
-### `npm run build` fails to minify
+### Add a New Application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Create a new directory under pps/: mkdir -p apps/myapp/templates
+2. Create Chart.yaml and alues.yaml
+3. Create Helm templates in 	emplates/
+4. Create ArgoCD Application: rgocd/applications/myapp.yaml
+5. Push to repository - ArgoCD will automatically deploy
+
+### Update Application Version
+
+1. Edit the image tag in pps/<app-name>/values.yaml
+2. Commit and push
+3. ArgoCD syncs automatically (or trigger manual sync)
+
+### Rollback to Previous Version
+
+In ArgoCD UI:
+1. Go to application
+2. Click "History"
+3. Select previous revision and click "Rollback"
+
+## 🐛 Troubleshooting
+
+### Application Not Syncing
+
+1. Check ArgoCD logs: kubectl logs -n argocd deployment/argocd-application-controller
+2. Verify repository access is configured
+3. Check AppProject permissions
+4. Review Application spec for errors
+
+### Check Application Status
+
+``ash
+# List all applications
+kubectl get application -n argocd
+
+# Get detailed status
+kubectl describe application website -n argocd
+
+# View sync history
+kubectl get application website -n argocd -o jsonpath='{.status.operationState}'
+``
+
+## 📖 Resources
+
+- [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
+- [Helm Documentation](https://helm.sh/docs/)
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [k3s Documentation](https://docs.k3s.io/)
+
+## 📄 License
+
+Your License Here
