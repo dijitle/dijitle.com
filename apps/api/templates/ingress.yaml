@@ -24,7 +24,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "api.fullname" . }}
+                name: {{ include "api.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
