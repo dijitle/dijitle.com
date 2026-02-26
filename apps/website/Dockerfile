@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM nginx:1.25-alpine
+FROM nginx:alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl
