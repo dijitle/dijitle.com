@@ -6,8 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "website.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
   annotations:
+    argocd.argoproj.io/compare-result: ignore
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
