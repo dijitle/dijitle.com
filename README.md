@@ -4,14 +4,25 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 
 ## 📁 Repository Structure
 
-`├── apps/                          # Helm charts for applications
+`├── .github/
+│   └── workflows/
+│       └── docker-build.yml       # GitHub Actions for Docker builds
+├── apps/                          # Helm charts and Dockerfiles
 │   ├── website/                   # Website application
 │   │   ├── Chart.yaml
 │   │   ├── values.yaml
+│   │   ├── Dockerfile
+│   │   ├── nginx.conf
+│   │   ├── .dockerignore
+│   │   ├── package.json
 │   │   └── templates/
 │   └── api/                       # API application
 │       ├── Chart.yaml
 │       ├── values.yaml
+│       ├── Dockerfile
+│       ├── .dockerignore
+│       ├── requirements.txt
+│       ├── main.py
 │       └── templates/
 ├── argocd/                        # ArgoCD configuration
 │   ├── appproject.yaml            # AppProject definition
@@ -19,10 +30,12 @@ Multi-application Kubernetes deployment repository using ArgoCD and Helm charts 
 │   └── applications/              # Individual app definitions
 │       ├── website.yaml
 │       └── api.yaml
-└── docs/                          # Documentation
-    ├── SETUP.md
-    ├── ARCHITECTURE.md
-    └── DEVELOPMENT.md`
+├── docs/                          # Documentation
+│   ├── SETUP.md
+│   ├── ARCHITECTURE.md
+│   ├── DEVELOPMENT.md
+│   └── DOCKER.md
+└── LICENSE`
 
 ## 🚀 Quick Start
 
@@ -114,6 +127,7 @@ Changes in this repository automatically propagate to your k3s cluster via ArgoC
 - [Setup Guide](docs/SETUP.md) - Detailed installation instructions
 - [Architecture](docs/ARCHITECTURE.md) - System architecture overview
 - [Development](docs/DEVELOPMENT.md) - Development workflow
+- [Docker Build](docs/DOCKER.md) - Docker image building and GitHub Actions CI/CD
 
 ## 🛠️ Common Tasks
 

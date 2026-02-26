@@ -1,0 +1,26 @@
+# .dockerignore for API
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+.git
+.gitignore
+.dockerignore
+.env
+.env.local
+.pytest_cache
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+README.md
+LICENSE
+.DS_Store
+.vscode
+.idea
+*.log
