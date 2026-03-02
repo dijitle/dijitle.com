@@ -1,5 +1,43 @@
 #writes output to .\dijitle.svg
 
+function cornerify { 
+    param (
+        $x,
+        $y,
+        $radius,
+        $coordinate
+    )
+    $deltaX = 0
+    $deltaY = 0
+
+    if ($coordinate -eq "N") {
+        $deltaX = $radius / 2
+        $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
+
+        return "$($x - $deltaX) $($y + $deltaY)
+        A $radius $radius 0 0 1 $($x + $deltaX) $($y + $deltaY)"
+    } elseif ($coordinate -eq "S") {
+        $deltaX = $radius / 2
+        $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
+
+        return "$($x + $deltaX) $($y - $deltaY)
+        A $radius $radius 0 0 1 $($x - $deltaX) $($y - $deltaY)"
+    } elseif ($coordinate -eq "NE") {
+        $x += $radius
+    } elseif ($coordinate -eq "SE") {
+        $x += $radius
+        $y += $radius
+    } elseif ($coordinate -eq "SW") {
+        $y += $radius
+    } elseif ($coordinate -eq "NW") {
+        #no change
+    } else {
+        throw "Invalid coordinate: $coordinate. Must be one of N, S, NE, SE, SW, NW."
+    }
+    `
+    
+}
+
 $viewBoxSize = 100
 
 #adjustable parameters
@@ -60,12 +98,10 @@ $OutterStemY = $circleRadius * [math]::sin([math]::pi / 6)
 $InnerStemX = $OutterStemX
 $InnerStemY = $OutterStemY + $NInnerY
 
-
-
 $svgContent = @"
 <svg viewBox="0 0 $viewBoxSize $viewBoxSize" xmlns="http://www.w3.org/2000/svg">
   <path fill="#000"  
-     d="M $NOuterX $NOuterY
+     d="M $(cornerify -x $NOuterX -y $NOuterY -radius $cornerRadius -coordinate "N")
         L $OutterStemX $OutterStemY
         L $InnerStemX $InnerStemY
         L $NInnerX $NInnerY
@@ -76,13 +112,13 @@ $svgContent = @"
         L $NEInnerX $NEInnerY
         L $NEOutterX $NEOutterY
         L $SEOutterX $SEOutterY
-        L $SOuterX $SOuterY
+        L $(cornerify -x $SOuterX -y $SOuterY -radius $cornerRadius -coordinate "S")
         L $SWOutterX $SWOutterY
         L $NWOutterX $NWOutterY
         Z"/>
         
     <circle cx="$centerX" cy="$centerY" r="$circleRadius" fill="#000"/>
 </svg>
-"@    
+"@
 
 $svgContent | Out-File -FilePath .\dijitle.svg -Encoding utf8
