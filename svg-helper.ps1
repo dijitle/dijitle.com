@@ -84,14 +84,14 @@ function cornerify {
     }
     
     return "$($x + $deltaX1) $($y + $deltaY1)
-    Q $x $y $($x + $deltaX2) $($y + $deltaY2)"
+        Q $x $y $($x + $deltaX2) $($y + $deltaY2)"
 }
 
 $viewBoxSize = 100
 
 #adjustable parameters
-$innerRatio = 0.55
-$cornerRadius = 8
+$innerRatio = 0.525
+$cornerRadius = 16
 
 #helper parameters
 $outterEdgeLength = $viewBoxSize / 2
@@ -142,7 +142,7 @@ $NWInnerY = $centerX - $innerEdgeLength * [math]::sin([math]::pi / 6)
 
 
 $OutterStemX = $centerX + $circleRadius
-$OutterStemY = $circleRadius * [math]::sin([math]::pi / 6) 
+$OutterStemY = $circleRadius * [math]::tan([math]::pi / 6) 
 
 $InnerStemX = $OutterStemX
 $InnerStemY = $OutterStemY + $NInnerY
