@@ -90,7 +90,7 @@ function cornerify {
 $viewBoxSize = 100
 
 #adjustable parameters
-$innerRatio = 0.5
+$innerRatio = 0.55
 $cornerRadius = 8
 
 #helper parameters
