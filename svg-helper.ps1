@@ -5,23 +5,24 @@ function cornerify {
         $x,
         $y,
         $radius,
-        $coordinate
+        $coordinate,
+        $clockwise
     )
     $deltaX = 0
     $deltaY = 0
 
     if ($coordinate -eq "N") {
-        $deltaX = $radius / 2
+        $deltaX = $radius / 2 * $(if ($clockwise) { 1 } else { -1 })
         $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
 
         return "$($x - $deltaX) $($y + $deltaY)
-        A $radius $radius 0 0 1 $($x + $deltaX) $($y + $deltaY)"
+        A $radius $radius 0 0 $(if ($clockwise) { 1 } else { 0 }) $($x + $deltaX) $($y + $deltaY)"
     } elseif ($coordinate -eq "S") {
-        $deltaX = $radius / 2
+        $deltaX = $radius / 2 * $(if ($clockwise) { 1 } else { -1 })
         $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
 
         return "$($x + $deltaX) $($y - $deltaY)
-        A $radius $radius 0 0 1 $($x - $deltaX) $($y - $deltaY)"
+        A $radius $radius 0 0 $(if ($clockwise) { 1 } else { 0 }) $($x - $deltaX) $($y - $deltaY)"
     } elseif ($coordinate -eq "NE") {
         $x += $radius
     } elseif ($coordinate -eq "SE") {
@@ -101,18 +102,18 @@ $InnerStemY = $OutterStemY + $NInnerY
 $svgContent = @"
 <svg viewBox="0 0 $viewBoxSize $viewBoxSize" xmlns="http://www.w3.org/2000/svg">
   <path fill="#000"  
-     d="M $(cornerify -x $NOuterX -y $NOuterY -radius $cornerRadius -coordinate "N")
+     d="M $(cornerify -x $NOuterX -y $NOuterY -radius $cornerRadius -coordinate "N" -clockwise $true)
         L $OutterStemX $OutterStemY
         L $InnerStemX $InnerStemY
-        L $NInnerX $NInnerY
+        L $(cornerify -x $NInnerX -y $NInnerY -radius ($cornerRadius * $innerRatio) -coordinate "N" -clockwise $false)
         L $NWInnerX $NWInnerY
         L $SWInnerX $SWInnerY
-        L $SInnerX $SInnerY
+        L $(cornerify -x $SInnerX -y $SInnerY -radius ($cornerRadius * $innerRatio) -coordinate "S" -clockwise $false)
         L $SEInnerX $SEInnerY
         L $NEInnerX $NEInnerY
         L $NEOutterX $NEOutterY
         L $SEOutterX $SEOutterY
-        L $(cornerify -x $SOuterX -y $SOuterY -radius $cornerRadius -coordinate "S")
+        L $(cornerify -x $SOuterX -y $SOuterY -radius $cornerRadius -coordinate "S" -clockwise $true)
         L $SWOutterX $SWOutterY
         L $NWOutterX $NWOutterY
         Z"/>
