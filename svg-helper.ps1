@@ -8,42 +8,90 @@ function cornerify {
         $coordinate,
         $clockwise
     )
-    $deltaX = 0
-    $deltaY = 0
+    $deltaX1 = 0
+    $deltaX2 = 0
+    $deltaY1 = 0
+    $deltaY2 = 0
+    $cw = $(if ($clockwise) { 1 } else { - 1 })
 
     if ($coordinate -eq "N") {
-        $deltaX = $radius / 2 * $(if ($clockwise) { 1 } else { -1 })
-        $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
+        $deltaX1 = -$radius / 2 * [math]::cos([math]::pi / 6) * $cw
+        $deltaY1 = $radius / 2 * [math]::sin([math]::pi / 6)
 
-        return "$($x - $deltaX) $($y + $deltaY)
-        A $radius $radius 0 0 $(if ($clockwise) { 1 } else { 0 }) $($x + $deltaX) $($y + $deltaY)"
+        $deltaX2 = $radius / 2 * [math]::cos([math]::pi / 6) * $cw
+        $deltaY2 = $radius / 2 * [math]::sin([math]::pi / 6)
+
     } elseif ($coordinate -eq "S") {
-        $deltaX = $radius / 2 * $(if ($clockwise) { 1 } else { -1 })
-        $deltaY = $radius / 2 * [math]::sin([math]::pi / 6)
+        $deltaX1 = $radius / 2 * [math]::cos([math]::pi / 6) * $cw
+        $deltaY1 = -$radius / 2 * [math]::sin([math]::pi / 6) 
 
-        return "$($x + $deltaX) $($y - $deltaY)
-        A $radius $radius 0 0 $(if ($clockwise) { 1 } else { 0 }) $($x - $deltaX) $($y - $deltaY)"
+        $deltaX2 = -$radius / 2 * [math]::cos([math]::pi / 6) * $cw
+        $deltaY2 = -$radius / 2 * [math]::sin([math]::pi / 6) 
+
     } elseif ($coordinate -eq "NE") {
-        $x += $radius
+        $deltaX1 = -$radius / 2 * [math]::cos([math]::pi / 6) * $cw
+        $deltaY1 = -$radius / 2 * [math]::sin([math]::pi / 6)
+
+        $deltaX2 = 0
+        $deltaY2 = $radius / 2
+        
     } elseif ($coordinate -eq "SE") {
-        $x += $radius
-        $y += $radius
+        if($clockwise) {
+            $deltaX1 = 0
+            $deltaY1 = -$radius / 2
+
+            $deltaX2 = -$radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY2 = $radius / 2 * [math]::sin([math]::pi / 6)
+        } else {
+            $deltaX1 = -$radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY1 = $radius / 2 * [math]::sin([math]::pi / 6)
+
+            $deltaX2 = 0
+            $deltaY2 = -$radius / 2
+        }
+        
     } elseif ($coordinate -eq "SW") {
-        $y += $radius
+        if($clockwise) {
+            $deltaX1 = $radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY1 = $radius / 2 * [math]::sin([math]::pi / 6)
+
+            $deltaX2 = 0
+            $deltaY2 = -$radius / 2 
+        } else {
+            $deltaX1 = 0
+            $deltaY1 = -$radius / 2 
+
+            $deltaX2 = $radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY2 = $radius / 2 * [math]::sin([math]::pi / 6)
+        }
+        
     } elseif ($coordinate -eq "NW") {
-        #no change
+        if($clockwise) {
+            $deltaX1 = 0
+            $deltaY1 = $radius / 2
+
+            $deltaX2 = $radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY2 = -$radius / 2 * [math]::sin([math]::pi / 6)
+        } else {
+            $deltaX1 = $radius / 2 * [math]::cos([math]::pi / 6)
+            $deltaY1 = -$radius / 2 * [math]::sin([math]::pi / 6)
+
+            $deltaX2 = 0
+            $deltaY2 = $radius / 2 
+        }
     } else {
         throw "Invalid coordinate: $coordinate. Must be one of N, S, NE, SE, SW, NW."
     }
-    `
     
+    return "$($x + $deltaX1) $($y + $deltaY1)
+    Q $x $y $($x + $deltaX2) $($y + $deltaY2)"
 }
 
 $viewBoxSize = 100
 
 #adjustable parameters
 $innerRatio = 0.5
-$cornerRadius = 10
+$cornerRadius = 8
 
 #helper parameters
 $outterEdgeLength = $viewBoxSize / 2
@@ -106,16 +154,16 @@ $svgContent = @"
         L $OutterStemX $OutterStemY
         L $InnerStemX $InnerStemY
         L $(cornerify -x $NInnerX -y $NInnerY -radius ($cornerRadius * $innerRatio) -coordinate "N" -clockwise $false)
-        L $NWInnerX $NWInnerY
-        L $SWInnerX $SWInnerY
+        L $(cornerify -x $NWInnerX -y $NWInnerY -radius ($cornerRadius * $innerRatio) -coordinate "NW" -clockwise $false)
+        L $(cornerify -x $SWInnerX -y $SWInnerY -radius ($cornerRadius * $innerRatio) -coordinate "SW" -clockwise $false)
         L $(cornerify -x $SInnerX -y $SInnerY -radius ($cornerRadius * $innerRatio) -coordinate "S" -clockwise $false)
-        L $SEInnerX $SEInnerY
+        L $(cornerify -x $SEInnerX -y $SEInnerY -radius ($cornerRadius * $innerRatio) -coordinate "SE" -clockwise $false)
         L $NEInnerX $NEInnerY
-        L $NEOutterX $NEOutterY
-        L $SEOutterX $SEOutterY
+        L $(cornerify -x $NEOutterX -y $NEOutterY -radius $cornerRadius -coordinate "NE" -clockwise $true)
+        L $(cornerify -x $SEOutterX -y $SEOutterY -radius $cornerRadius -coordinate "SE" -clockwise $true)
         L $(cornerify -x $SOuterX -y $SOuterY -radius $cornerRadius -coordinate "S" -clockwise $true)
-        L $SWOutterX $SWOutterY
-        L $NWOutterX $NWOutterY
+        L $(cornerify -x $SWOutterX -y $SWOutterY -radius $cornerRadius -coordinate "SW" -clockwise $true)
+        L $(cornerify -x $NWOutterX -y $NWOutterY -radius $cornerRadius -coordinate "NW" -clockwise $true)
         Z"/>
         
     <circle cx="$centerX" cy="$centerY" r="$circleRadius" fill="#000"/>
